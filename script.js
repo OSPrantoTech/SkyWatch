@@ -3,6 +3,8 @@
  * Features: PWA Notification, Wind Chill vs Heat Index (20°C Limit), In-depth Analysis
  */
 
+let lastCoords = null; // To store last known coordinates for pull-to-refresh
+
 // ১. সার্ভিস ওয়ার্কার রেজিস্টার করা (নোটিফিকেশন পিনের জন্য)
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
@@ -195,6 +197,14 @@ async function updateSkyWatch(lat, lon) {
 
     } catch (e) {
         console.error("Error updating weather:", e);
+        if (!navigator.onLine) {
+            const locationDisplay = document.getElementById('location-display');
+            if (!locationDisplay.innerHTML.includes('অফলাইনে')) {
+                locationDisplay.innerHTML += '<br><small style="color: #facc15;">আপনি অফলাইনে আছেন। সর্বশেষ সংরক্ষিত ডেটা দেখানো হচ্ছে।</small>';
+            }
+        } else {
+            document.getElementById('weather-main').innerHTML = "আবহাওয়ার ডেটা লোড করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।";
+        }
     }
 }
 
@@ -203,10 +213,56 @@ function init() {
     document.getElementById('copyright-year').textContent = new Date().getFullYear();
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
-            (pos) => updateSkyWatch(pos.coords.latitude, pos.coords.longitude),
+            (pos) => {
+                lastCoords = { latitude: pos.coords.latitude, longitude: pos.coords.longitude };
+                updateSkyWatch(pos.coords.latitude, pos.coords.longitude);
+            },
             () => { document.getElementById('weather-main').innerHTML = "অবস্থান অ্যাক্সেস করা যায়নি। অনুগ্রহ করে অবস্থান অনুমতি দিন।"; },
             { enableHighAccuracy: true, timeout: 15000 }
         );
     }
 }
+
+// Pull-to-refresh Logic
+let startY = 0;
+let isPulling = false;
+
+document.body.addEventListener('touchstart', (e) => {
+    if (window.scrollY === 0) {
+        startY = e.touches[0].pageY;
+        isPulling = true;
+    }
+}, { passive: true });
+
+document.body.addEventListener('touchmove', (e) => {
+    if (!isPulling) return;
+    const y = e.touches[0].pageY;
+    const diff = y - startY;
+
+    if (diff > 0) {
+        document.body.style.transform = `translateY(${Math.min(diff / 2, 100)}px)`;
+    }
+}, { passive: true });
+
+document.body.addEventListener('touchend', (e) => {
+    if (!isPulling) return;
+    const y = e.changedTouches[0].pageY;
+    const diff = y - startY;
+
+    document.body.style.transition = 'transform 0.3s';
+    document.body.style.transform = 'translateY(0)';
+
+    if (diff > 120 && lastCoords) { // Threshold to trigger refresh
+        const mainCard = document.querySelector('.main-temp');
+        mainCard.innerHTML = '<span class="temp-val" style="font-size: 2rem;">রিফ্রেশ হচ্ছে...</span>';
+        updateSkyWatch(lastCoords.latitude, lastCoords.longitude);
+    }
+    
+    setTimeout(() => {
+        document.body.style.transition = '';
+    }, 300);
+
+    isPulling = false;
+});
+
 init();
