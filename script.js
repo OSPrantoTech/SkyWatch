@@ -195,6 +195,14 @@ async function updateSkyWatch(lat, lon) {
 
     } catch (e) {
         console.error("Error updating weather:", e);
+        if (!navigator.onLine) {
+            const locationDisplay = document.getElementById('location-display');
+            if (!locationDisplay.innerHTML.includes('অফলাইনে')) {
+                locationDisplay.innerHTML += '<br><small style="color: #facc15;">আপনি অফলাইনে আছেন। সর্বশেষ সংরক্ষিত ডেটা দেখানো হচ্ছে।</small>';
+            }
+        } else {
+            document.getElementById('weather-main').innerHTML = "আবহাওয়ার ডেটা লোড করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।";
+        }
     }
 }
 
