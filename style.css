@@ -1,0 +1,27 @@
+:root { --bg-color: #020617; --accent-color: #38bdf8; --card-bg: rgba(30, 41, 59, 0.7); }
+body { background: radial-gradient(circle at center, #1e293b, #020617); color: #f1f5f9; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; }
+.container { max-width: 500px; width: 100%; }
+.header-section { text-align: center; margin-bottom: 20px; }
+.brand { font-size: 2.8rem; color: var(--accent-color); margin: 0; font-weight: 800; }
+.tagline { font-size: 1rem; color: #94a3b8; margin-top: 5px; display: block; text-align: center; }
+
+.card { background: var(--card-bg); border-radius: 25px; padding: 22px; backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); }
+.temp-val { font-size: 5rem; font-weight: bold; text-align: center; display: block; line-height: 1; }
+.feel-text { color: #38bdf8; font-size: 1.2rem; text-align: center; margin-top: 10px; }
+.location-text { text-align: center; color: #94a3b8; margin: 15px 0; font-size: 1.1rem; }
+
+/* ৮ আইটেমের গ্রিড ডিজাইন */
+.details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 20px; margin: 20px 0; }
+.detail-item { font-size: 0.8rem; display: flex; align-items: center; gap: 8px; }
+.detail-item i { color: var(--accent-color); width: 20px; text-align: center; }
+
+.explanation-box { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; border: 1px solid rgba(56,189,248,0.2); margin-bottom: 15px; }
+.explanation-box h4 { color: #facc15; margin: 0 0 10px 0; font-size: 1rem; }
+.explanation-box p { font-size: 0.85rem; line-height: 1.6; color: #cbd5e1; margin: 8px 0; }
+
+.tip-box { background: rgba(56, 189, 248, 0.12); border-left: 4px solid var(--accent-color); padding: 12px; font-size: 0.85rem; border-radius: 8px; margin-bottom: 20px; }
+.section-title { font-size: 1.1rem; color: #facc15; margin: 25px 0 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.hourly-forecast { display: flex; overflow-x: auto; gap: 12px; padding-bottom: 10px; scrollbar-width: none; }
+.hourly-item { min-width: 65px; background: rgba(255,255,255,0.06); padding: 12px; border-radius: 18px; text-align: center; }
+.daily-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.04); padding: 12px 18px; border-radius: 15px; margin-bottom: 10px; }
+footer { text-align: center; margin-top: 30px; font-size: 0.8rem; opacity: 0.4; }

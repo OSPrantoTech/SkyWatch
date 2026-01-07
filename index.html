@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkyWatch | Atmosphere Decoded</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header-section">
+            <h1 class="brand">SkyWatch</h1>
+            <p class="tagline">Your Atmosphere, Decoded.</p>
+        </header>
+
+        <main class="single-card-view">
+            <div class="card">
+                <div class="card-header"><i class="fas fa-satellite"></i> লাইভ ট্র্যাকিং ও বিশ্লেষণ</div>
+                <div id="rain-alert" class="rain-alert" style="display: none;"></div>
+                
+                <div id="weather-main" class="main-temp"></div>
+                <div id="location-display" class="location-text"></div>
+
+                <div class="details-grid" id="weather-details"></div>
+
+                <div id="weather-explain"></div>
+                <div id="weather-tip" class="tip-box"></div>
+
+                <h3 class="section-title"><i class="fas fa-clock"></i> আগামী ২৪ ঘণ্টা</h3>
+                <div class="hourly-forecast" id="hourly-forecast"></div>
+
+                <h3 class="section-title"><i class="fas fa-calendar-alt"></i> আগামী ৭ দিনের পূর্বাভাস</h3>
+                <div class="daily-forecast" id="daily-forecast"></div>
+            </div>
+        </main>
+        <footer><p>© Copyright OSPranto Tech | 2026</p></footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
