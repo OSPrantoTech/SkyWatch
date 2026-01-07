@@ -69,9 +69,6 @@ function generateInDepthAnalysis(cur, finalFeels, rain, dewPoint, uv) {
         <p><strong>৫. শিশিরাঙ্ক ও আরাম:</strong> শিশিরাঙ্ক ${dewPoint}°C। ${comfortDesc}</p>
         
         <p><strong>৬. চাঁদের দশা:</strong> আজ চাঁদের বয়স ${moonAge} দিন। ${moonAge > 13 && moonAge < 17 ? "আজ পূর্ণিমার কাছাকাছি সময়, আকাশ বেশ উজ্জ্বল থাকবে।" : moonAge > 27 || moonAge < 3 ? "আজ অমাবস্যার কাছাকাছি সময়।" : "চাঁদ আংশিক দৃশ্যমান।"}</p>
-        
-        <hr style="opacity:0.1; margin:10px 0;">
-        <p style="font-size:0.85rem; color:var(--accent-color);"><strong>সারসংক্ষেপ:</strong> তাপমাত্রা ${temp}°C হলেও শরীরের কাছে এটি <strong>${finalFeels}°C</strong> এর মতো মনে হচ্ছে।</p>
     </div>`;
 }
 
