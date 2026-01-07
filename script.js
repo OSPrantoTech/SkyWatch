@@ -1,3 +1,8 @@
+/**
+ * SkyWatch - Full JavaScript Logic
+ * Features: PWA Notification, Wind Chill vs Heat Index (20°C Limit), In-depth Analysis
+ */
+
 // ১. সার্ভিস ওয়ার্কার রেজিস্টার করা (নোটিফিকেশন পিনের জন্য)
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
@@ -7,7 +12,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-// ২. চাঁদের বয়স বের করার ফাংশন
+// ২. চাঁদের বয়স বের করার ফাংশন (জ্যোতির্বিজ্ঞান লজিক)
 function getMoonAge() {
     const date = new Date(), lp = 2551443;
     const now = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
@@ -24,15 +29,43 @@ async function fetchAddress(lat, lon) {
     } catch (e) { return "লোকেশন পাওয়া গেছে"; }
 }
 
-// ৪. ইন-ডেপথ বিশ্লেষণের HTML জেনারেটর
+// ৪. ইন-ডেপথ বিশ্লেষণের HTML জেনারেটর (বিস্তারিত ব্যাখ্যাসহ)
 function generateInDepthAnalysis(cur, finalFeels, rain, dewPoint, uv) {
     const temp = Math.round(cur.air_temperature);
+    const cloud = cur.cloud_area_fraction;
+    const pressure = cur.air_pressure_at_sea_level;
+    const moonAge = getMoonAge();
+
+    // মেঘের অবস্থার ব্যাখ্যা
+    let cloudDesc = cloud < 20 ? "আকাশ একদম পরিষ্কার" : cloud < 70 ? "আকাশ আংশিক মেঘলা" : "আকাশ পুরোপুরি মেঘাচ্ছন্ন";
+    
+    // শিশিরাঙ্ক ও অস্বস্তির ব্যাখ্যা
+    let comfortDesc = dewPoint > 21 ? "বাতাসে জলীয় বাষ্প বেশি থাকায় ভ্যাপসা গরম লাগতে পারে।" : "বাতাস বেশ আরামদায়ক।";
+    
+    // বায়ুচাপের ব্যাখ্যা
+    let pressureDesc = pressure < 1005 ? "বায়ুচাপ কম, বৃষ্টির সম্ভাবনা আছে।" : "বায়ুচাপ স্বাভাবিক, স্থিতিশীল আবহাওয়া।";
+
+    // UV সতর্কবার্তা
+    let uvDesc = uv < 3 ? "নিরাপদ" : uv < 6 ? "মাঝারি (ছাতা ব্যবহার করুন)" : "তীব্র (সরাসরি রোদ এড়িয়ে চলুন)";
+
     return `
     <div class="explanation-box">
-        <h4><i class="fas fa-chart-pie"></i> ইন-ডেপথ বিশ্লেষণ:</h4>
-        <p><strong>তাপমাত্রা ও অনুভূতি:</strong> বর্তমানে ${temp}°C থাকলেও বাতাসের গতি ও আর্দ্রতার কারণে শরীর <strong>${finalFeels}°C</strong> অনুভব করছে।</p>
-        <p><strong>পরিবেশ:</strong> মেঘের ঘনত্ব ${cur.cloud_area_fraction}% এবং শিশিরাঙ্ক ${dewPoint}°C। বায়ুচাপ ${cur.air_pressure_at_sea_level} hPa।</p>
-        <p><strong>সতর্কতা:</strong> UV ইনডেক্স ${uv}। ${rain > 0 ? `আগামী ১ ঘণ্টায় বৃষ্টিপাতের সম্ভাবনা ${rain}mm।` : "বর্তমানে বৃষ্টির সম্ভাবনা নেই।"}</p>
+        <h4><i class="fas fa-microscope"></i> সহজ ভাষায় বিশ্লেষণ:</h4>
+        
+        <p><strong>১. মেঘ ও আকাশ:</strong> বর্তমানে ${cloudDesc} (${cloud}%)। ${cloud > 80 ? "বৃষ্টির জন্য প্রস্তুত থাকুন।" : "রোদের উজ্জ্বলতা বজায় থাকবে।"}</p>
+        
+        <p><strong>২. বায়ুচাপ:</strong> বর্তমানে বায়ুচাপ ${pressure} hPa। ${pressureDesc}</p>
+        
+        <p><strong>৩. UV ইনডেক্স:</strong> সূর্যের অতিবেগুনি রশ্মির তীব্রতা ${uv} অর্থাৎ এটি ${uvDesc}।</p>
+        
+        <p><strong>৪. বৃষ্টিপাত:</strong> বর্তমানে ${rain > 0 ? `প্রতি ঘণ্টায় ${rain}mm বৃষ্টি হচ্ছে বা হওয়ার সম্ভাবনা আছে।` : "বর্তমানে বৃষ্টির কোনো সম্ভাবনা নেই।"}</p>
+        
+        <p><strong>৫. শিশিরাঙ্ক ও আরাম:</strong> শিশিরাঙ্ক ${dewPoint}°C। ${comfortDesc}</p>
+        
+        <p><strong>৬. চাঁদের দশা:</strong> আজ চাঁদের বয়স ${moonAge} দিন। ${moonAge > 13 && moonAge < 17 ? "আজ পূর্ণিমার কাছাকাছি সময়, আকাশ বেশ উজ্জ্বল থাকবে।" : moonAge > 27 || moonAge < 3 ? "আজ অমাবস্যার কাছাকাছি সময়।" : "চাঁদ আংশিক দৃশ্যমান।"}</p>
+        
+        <hr style="opacity:0.1; margin:10px 0;">
+        <p style="font-size:0.85rem; color:var(--accent-color);"><strong>সারসংক্ষেপ:</strong> তাপমাত্রা ${temp}°C হলেও শরীরের কাছে এটি <strong>${finalFeels}°C</strong> এর মতো মনে হচ্ছে।</p>
     </div>`;
 }
 
@@ -52,8 +85,9 @@ function sendToSW(temp, feelsLike, address) {
         reg.showNotification(`SkyWatch: ${temp}°C`, {
             body: `অনুভূত হচ্ছে: ${feelsLike}°C | ${address}`,
             tag: 'live-weather',
-            ongoing: true, // অ্যান্ড্রয়েডে পিন করে রাখার জন্য
-            icon: 'logo.png'
+            ongoing: true, // পিন করে রাখার জন্য
+            icon: 'logo.png',
+            badge: 'logo.png'
         });
     });
 }
@@ -78,8 +112,8 @@ async function updateSkyWatch(lat, lon) {
         const hum = cur.relative_humidity;
         const windKmh = (cur.wind_speed * 3.6).toFixed(1);
 
-        // Feels Like উন্নত সূত্র (Wind Chill + Apparent Temp)
-        let feelsLike = rawTemp <= 15 
+        // --- সংশোধিত লজিক: ২০°C লিমিট সেট করা হয়েছে ---
+        let feelsLike = rawTemp <= 20 
             ? 13.12 + 0.6215 * rawTemp - 11.37 * Math.pow(windKmh, 0.16) + 0.3965 * rawTemp * Math.pow(windKmh, 0.16)
             : rawTemp + 0.33 * ((hum/100) * 6.105 * Math.exp(17.27 * rawTemp / (237.7 + rawTemp))) - 4.0;
         
@@ -89,17 +123,15 @@ async function updateSkyWatch(lat, lon) {
         const rain = timeseries[0].data.next_1_hours ? timeseries[0].data.next_1_hours.details.precipitation_amount : 0;
         const fTime = (iso) => new Date(iso).toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' });
 
-        // শিশিরাঙ্ক (Dew Point) ক্যালকুলেশন
-        let dewPoint = cur.dew_point_temperature || (rawTemp - (100 - hum) / 5);
-        dewPoint = Math.round(dewPoint);
+        let dewPoint = Math.round(cur.dew_point_temperature || (rawTemp - (100 - hum) / 5));
 
-        // weather-main সেকশন আপডেট (আপনার রিকোয়েস্ট অনুযায়ী)
+        // UI আপডেট: weather-main
         document.getElementById('weather-main').innerHTML = `
             <span class="temp-val">${finalTemp}°C</span>
             <p class="feel-text">অনূভূত হচ্ছে: ${finalFeels}°C</p>
         `;
 
-        // ৮টি আইটেমের গ্রিড আপডেট
+        // গ্রিড আপডেট (৮টি আইটেম)
         document.getElementById('weather-details').innerHTML = `
             <div class="detail-item"><i class="fas fa-cloud"></i> মেঘ: ${cur.cloud_area_fraction}%</div>
             <div class="detail-item"><i class="fas fa-gauge-high"></i> বায়ুচাপ: ${cur.air_pressure_at_sea_level}hPa</div>
@@ -111,14 +143,16 @@ async function updateSkyWatch(lat, lon) {
             <div class="detail-item"><i class="fas fa-mountain-sun"></i> সূর্যাস্ত: ${fTime(sunData.results.sunset)}</div>
         `;
 
-        // ইন-ডেপথ বিশ্লেষণ এবং টিপস
+        // ইন-ডেপথ ডিটেইলস আপডেট
         document.getElementById('weather-explain').innerHTML = generateInDepthAnalysis(cur, finalFeels, rain, dewPoint, uv);
-        document.getElementById('weather-tip').innerHTML = `<strong>💡 টিপস:</strong> ${finalTemp < 20 ? "আবহাওয়া শীতল, হালকা জ্যাকেট সাথে রাখুন।" : "সুতি পোশাক পরুন এবং প্রচুর পানি পান করুন।"}`;
+        
+        // টিপস সেকশন
+        document.getElementById('weather-tip').innerHTML = `<strong>💡 টিপস:</strong> ${finalTemp < 20 ? "আবহাওয়া শীতল, হালকা জ্যাকেট বা চাদর সাথে রাখুন।" : "সুতি পোশাক পরুন এবং শরীর হাইড্রেটেড রাখুন।"}`;
 
-        // নোটিফিকেশন প্যানেলে পিন করা
+        // নোটিফিকেশন আপডেট
         pinWeatherNotification(finalTemp, finalFeels, address);
 
-        // আগামী ২৪ ঘণ্টার ফোরকাস্ট স্লাইডার
+        // ফোরকাস্ট স্লাইডার (Hourly)
         let hourlyHtml = '';
         for(let i=1; i<=24; i++) {
             const hData = timeseries[i];
@@ -132,7 +166,7 @@ async function updateSkyWatch(lat, lon) {
         }
         document.getElementById('hourly-forecast').innerHTML = hourlyHtml;
 
-        // আগামী ৭ দিনের ফোরকাস্ট
+        // ৭ দিনের ফোরকাস্ট
         let dailyData = {};
         timeseries.forEach(item => {
             const date = item.time.split('T')[0];
@@ -156,11 +190,10 @@ async function updateSkyWatch(lat, lon) {
 
     } catch (e) {
         console.error("Error updating weather:", e);
-        document.getElementById('weather-main').innerHTML = "ডেটা লোড করতে সমস্যা হচ্ছে।";
     }
 }
 
-// লোকেশন পারমিশন এবং ইনিশিয়ালাইজেশন
+// ইনিশিয়ালাইজেশন
 function init() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
