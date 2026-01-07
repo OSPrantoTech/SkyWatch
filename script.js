@@ -3,8 +3,6 @@
  * Features: PWA Notification, Wind Chill vs Heat Index (20°C Limit), In-depth Analysis
  */
 
-let lastCoords = null; // To store last known coordinates for pull-to-refresh
-
 // ১. সার্ভিস ওয়ার্কার রেজিস্টার করা (নোটিফিকেশন পিনের জন্য)
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
