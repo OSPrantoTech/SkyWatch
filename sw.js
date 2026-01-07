@@ -51,3 +51,25 @@ self.addEventListener('fetch', (event) => {
       })
   );
 });
+
+// Notification Click: Handle user interaction with notifications
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close(); // Close the notification
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      // If a window for this PWA is already open, focus it
+      if (clientList.length > 0) {
+        let client = clientList[0];
+        for (let i = 0; i < clientList.length; i++) {
+          if (clientList[i].focused) {
+            client = clientList[i];
+          }
+        }
+        return client.focus();
+      }
+      // Otherwise, open a new window
+      return clients.openWindow('/');
+    })
+  );
+});
