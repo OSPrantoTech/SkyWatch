@@ -1,0 +1,35 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Install Bubblewrap CLI
+      run: npm install -g @bubblewrap/cli
+
+    - name: Initialize and Build APK with Bubblewrap
+      run: |
+        # The manifest URL must point to the live GitHub Pages site
+        MANIFEST_URL="https://$(echo ${{ github.repository }} | cut -d'/' -f1).github.io/$(echo ${{ github.repository }} | cut -d'/' -f2)/manifest.json"
+        echo "Using manifest URL: $MANIFEST_URL"
+        bubblewrap init --manifest="$MANIFEST_URL"
+        bubblewrap build
+
+    - name: Upload APK as Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: skywatch-apk
+        path: app-release-signed.apk
