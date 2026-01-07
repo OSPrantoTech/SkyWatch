@@ -24,9 +24,15 @@ function getMoonAge() {
 async function fetchAddress(lat, lon) {
     try {
         const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=bn`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
         return data.locality || data.city || "আপনার এলাকা";
-    } catch (e) { return "লোকেশন পাওয়া গেছে"; }
+    } catch (e) {
+        console.error("Error fetching address:", e);
+        return "লোকেশন পাওয়া গেছে";
+    }
 }
 
 // ৪. ইন-ডেপথ বিশ্লেষণের HTML জেনারেটর (বিস্তারিত ব্যাখ্যাসহ)
@@ -99,12 +105,14 @@ async function updateSkyWatch(lat, lon) {
         document.getElementById('location-display').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${address}`;
 
         const weatherRes = await fetch(`https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${lat.toFixed(4)}&lon=${lon.toFixed(4)}`, {
-            headers: { 'User-Agent': 'SkyWatch/1.0 (OSPranto.Official@gmail.com)' }
+            headers: { 'User-Agent': 'SkyWatch/1.0' }
         });
+        if (!weatherRes.ok) throw new Error(`Weather API error: ${weatherRes.status}`);
         const data = await weatherRes.json();
         const timeseries = data.properties.timeseries;
 
         const sunRes = await fetch(`https://api.sunrise-sunset.org/json?lat=${lat}&lng=${lon}&formatted=0`);
+        if (!sunRes.ok) throw new Error(`Sun API error: ${sunRes.status}`);
         const sunData = await sunRes.json();
 
         const cur = timeseries[0].data.instant.details;
@@ -195,10 +203,11 @@ async function updateSkyWatch(lat, lon) {
 
 // ইনিশিয়ালাইজেশন
 function init() {
+    document.getElementById('copyright-year').textContent = new Date().getFullYear();
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             (pos) => updateSkyWatch(pos.coords.latitude, pos.coords.longitude),
-            () => { document.getElementById('weather-main').innerHTML = "লোকেশন পারমিশন প্রয়োজন।"; },
+            () => { document.getElementById('weather-main').innerHTML = "অবস্থান অ্যাক্সেস করা যায়নি। অনুগ্রহ করে অবস্থান অনুমতি দিন।"; },
             { enableHighAccuracy: true, timeout: 15000 }
         );
     }
